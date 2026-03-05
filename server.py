@@ -541,8 +541,7 @@ def configure_providers():
         logger.info(f"Registered providers: {', '.join(registered_providers)}")
 
     # Check if any enabled tools require LLM providers
-    NON_LLM_TOOLS = {"clink", "version", "listmodels", "challenge", "apilookup"}
-    llm_tools_active = set(TOOLS.keys()) - NON_LLM_TOOLS
+    llm_tools_active = {name for name, tool in TOOLS.items() if tool.requires_model()}
 
     # Require at least one valid provider only if LLM tools are enabled
     if not valid_providers and llm_tools_active:
@@ -556,7 +555,10 @@ def configure_providers():
             "- CUSTOM_API_URL for local models (Ollama, vLLM, etc.)"
         )
     elif not valid_providers:
-        logger.warning("No API providers configured. Only non-LLM tools (clink, version, etc.) will be available.")
+        non_llm_names = sorted(set(TOOLS.keys()) - llm_tools_active)
+        logger.warning(
+            f"No API providers configured. Only non-LLM tools ({', '.join(non_llm_names)}) will be available."
+        )
 
     logger.info(f"Available providers: {', '.join(valid_providers)}")
 
