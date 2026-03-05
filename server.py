@@ -540,8 +540,12 @@ def configure_providers():
     if registered_providers:
         logger.info(f"Registered providers: {', '.join(registered_providers)}")
 
-    # Require at least one valid provider
-    if not valid_providers:
+    # Check if any enabled tools require LLM providers
+    NON_LLM_TOOLS = {"clink", "version", "listmodels", "challenge", "apilookup"}
+    llm_tools_active = set(TOOLS.keys()) - NON_LLM_TOOLS
+
+    # Require at least one valid provider only if LLM tools are enabled
+    if not valid_providers and llm_tools_active:
         raise ValueError(
             "At least one API configuration is required. Please set either:\n"
             "- GEMINI_API_KEY for Gemini models\n"
@@ -551,6 +555,8 @@ def configure_providers():
             "- OPENROUTER_API_KEY for OpenRouter (multiple models)\n"
             "- CUSTOM_API_URL for local models (Ollama, vLLM, etc.)"
         )
+    elif not valid_providers:
+        logger.warning("No API providers configured. Only non-LLM tools (clink, version, etc.) will be available.")
 
     logger.info(f"Available providers: {', '.join(valid_providers)}")
 
@@ -614,7 +620,7 @@ def configure_providers():
     # Check if auto mode has any models available after restrictions
     from config import IS_AUTO_MODE
 
-    if IS_AUTO_MODE:
+    if IS_AUTO_MODE and llm_tools_active:
         available_models = ModelProviderRegistry.get_available_models(respect_restrictions=True)
         if not available_models:
             logger.error(
@@ -625,6 +631,8 @@ def configure_providers():
                 "No models available for auto mode due to restrictions. "
                 "Please adjust your allowed model settings or disable auto mode."
             )
+    elif IS_AUTO_MODE and not llm_tools_active:
+        logger.info("Auto mode skipped - no LLM tools are active.")
 
 
 @server.list_tools()
