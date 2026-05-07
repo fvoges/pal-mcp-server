@@ -173,9 +173,9 @@ class GeminiModelProvider(RegistryBackedProviderMixin, ModelProvider):
         # Create contents structure
         contents = [{"parts": parts}]
 
-        # Gemini 3 Pro Preview currently rejects medium thinking budgets; bump to high.
+        # Gemini 3.1 Pro Preview currently rejects medium thinking budgets; bump to high.
         effective_thinking_mode = thinking_mode
-        if resolved_model_name == "gemini-3-pro-preview" and thinking_mode == "medium":
+        if resolved_model_name == "gemini-3.1-pro-preview" and thinking_mode == "medium":
             logger.debug(
                 "Overriding thinking mode 'medium' with 'high' for %s due to launch limitation",
                 resolved_model_name,
@@ -470,52 +470,76 @@ class GeminiModelProvider(RegistryBackedProviderMixin, ModelProvider):
 
         capability_map = self.get_all_model_capabilities()
 
-        # Helper to find best model from candidates
-        def find_best(candidates: list[str]) -> Optional[str]:
-            """Return best model from candidates (sorted for consistency)."""
-            return sorted(candidates, reverse=True)[0] if candidates else None
+        def find_first(preferences: list[str]) -> Optional[str]:
+            """Return first available model from preference list."""
+            for model in preferences:
+                if model in allowed_models:
+                    return model
+            return None
 
         if category == ToolModelCategory.EXTENDED_REASONING:
-            # For extended reasoning, prefer models with thinking support
-            # First try Pro models that support thinking
+            preferred = find_first(
+                [
+                    "gemini-3.1-pro-preview",
+                    "gemini-2.5-pro",
+                ]
+            )
+            if preferred:
+                return preferred
+
             pro_thinking = [
                 m
                 for m in allowed_models
                 if "pro" in m and m in capability_map and capability_map[m].supports_extended_thinking
             ]
             if pro_thinking:
-                return find_best(pro_thinking)
+                return pro_thinking[0]
 
-            # Then any model that supports thinking
             any_thinking = [
                 m for m in allowed_models if m in capability_map and capability_map[m].supports_extended_thinking
             ]
             if any_thinking:
-                return find_best(any_thinking)
+                return any_thinking[0]
 
-            # Finally, just prefer Pro models even without thinking
             pro_models = [m for m in allowed_models if "pro" in m]
             if pro_models:
-                return find_best(pro_models)
+                return pro_models[0]
 
         elif category == ToolModelCategory.FAST_RESPONSE:
-            # Prefer Flash models for speed
-            flash_models = [m for m in allowed_models if "flash" in m]
-            if flash_models:
-                return find_best(flash_models)
+            preferred = find_first(
+                [
+                    "gemini-3-flash-preview",
+                    "gemini-2.5-flash",
+                    "gemini-3.1-flash-lite",
+                    "gemini-3.1-flash-lite-preview",
+                    "gemini-2.0-flash",
+                    "gemini-2.0-flash-lite",
+                ]
+            )
+            if preferred:
+                return preferred
 
         # Default for BALANCED or as fallback
-        # Prefer Flash for balanced use, then Pro, then anything
-        flash_models = [m for m in allowed_models if "flash" in m]
-        if flash_models:
-            return find_best(flash_models)
+        preferred = find_first(
+            [
+                "gemini-3-flash-preview",
+                "gemini-3.1-pro-preview",
+                "gemini-2.5-flash",
+                "gemini-2.5-pro",
+                "gemini-3.1-flash-lite",
+                "gemini-3.1-flash-lite-preview",
+                "gemini-2.0-flash",
+                "gemini-2.0-flash-lite",
+            ]
+        )
+        if preferred:
+            return preferred
 
         pro_models = [m for m in allowed_models if "pro" in m]
         if pro_models:
-            return find_best(pro_models)
+            return pro_models[0]
 
-        # Ultimate fallback to best available model
-        return find_best(allowed_models)
+        return allowed_models[0]
 
 
 # Load registry data at import time for registry consumers

@@ -38,6 +38,32 @@ class TestOpenAIProvider:
         assert provider.api_key == "test-key"
         assert provider.base_url == "https://custom.openai.com/v1"
 
+    @patch.dict(os.environ, {"OPENAI_API_KEY": "test-key", "OPENAI_BASE_URL": "https://custom-env.openai.com/v1"})
+    def test_registry_initialization_with_env_base_url(self):
+        """Test provider initialization with OPENAI_BASE_URL via registry."""
+        from providers.registry import ModelProviderRegistry
+
+        ModelProviderRegistry.clear_cache()
+
+        provider = ModelProviderRegistry.get_provider(ProviderType.OPENAI)
+
+        assert provider is not None
+        assert provider.api_key == "test-key"
+        assert provider.base_url == "https://custom-env.openai.com/v1"
+
+    @patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}, clear=True)
+    def test_registry_initialization_without_env_base_url(self):
+        """Test registry initialization uses the default OpenAI endpoint."""
+        from providers.registry import ModelProviderRegistry
+
+        ModelProviderRegistry.clear_cache()
+
+        provider = ModelProviderRegistry.get_provider(ProviderType.OPENAI)
+
+        assert provider is not None
+        assert provider.api_key == "test-key"
+        assert provider.base_url == "https://api.openai.com/v1"
+
     def test_model_validation(self):
         """Test model name validation."""
         provider = OpenAIModelProvider("test-key")
@@ -50,20 +76,27 @@ class TestOpenAIProvider:
         assert provider.validate_model_name("o4-mini") is True
         assert provider.validate_model_name("gpt-5") is True
         assert provider.validate_model_name("gpt-5-mini") is True
+        assert provider.validate_model_name("gpt-5.5") is True
+        assert provider.validate_model_name("gpt-5.4") is True
+        assert provider.validate_model_name("gpt-5.4-mini") is True
+        assert provider.validate_model_name("gpt-5.4-nano") is True
         assert provider.validate_model_name("gpt-5.2") is True
         assert provider.validate_model_name("gpt-5.1-codex") is True
         assert provider.validate_model_name("gpt-5.1-codex-mini") is True
 
         # Test valid aliases
+        assert provider.validate_model_name("latest") is True
         assert provider.validate_model_name("mini") is True
+        assert provider.validate_model_name("nano") is True
         assert provider.validate_model_name("o3mini") is True
         assert provider.validate_model_name("o4mini") is True
         assert provider.validate_model_name("o4mini") is True
         assert provider.validate_model_name("gpt5") is True
         assert provider.validate_model_name("gpt5-mini") is True
         assert provider.validate_model_name("gpt5mini") is True
-        assert provider.validate_model_name("gpt5.2") is True
-        assert provider.validate_model_name("gpt5.1") is True
+        assert provider.validate_model_name("gpt5.5") is True
+        assert provider.validate_model_name("gpt5.4") is True
+        assert provider.validate_model_name("gpt5.4-mini") is True
         assert provider.validate_model_name("gpt5.1-codex") is True
         assert provider.validate_model_name("codex-mini") is True
 
@@ -77,15 +110,18 @@ class TestOpenAIProvider:
         provider = OpenAIModelProvider("test-key")
 
         # Test shorthand resolution
-        assert provider._resolve_model_name("mini") == "gpt-5-mini"  # "mini" now resolves to gpt-5-mini
+        assert provider._resolve_model_name("latest") == "gpt-5.5"
+        assert provider._resolve_model_name("mini") == "gpt-5.4-mini"
+        assert provider._resolve_model_name("nano") == "gpt-5.4-nano"
         assert provider._resolve_model_name("o3mini") == "o3-mini"
         assert provider._resolve_model_name("o4mini") == "o4-mini"
         assert provider._resolve_model_name("o4mini") == "o4-mini"
         assert provider._resolve_model_name("gpt5") == "gpt-5"
         assert provider._resolve_model_name("gpt5-mini") == "gpt-5-mini"
         assert provider._resolve_model_name("gpt5mini") == "gpt-5-mini"
-        assert provider._resolve_model_name("gpt5.2") == "gpt-5.2"
-        assert provider._resolve_model_name("gpt5.1") == "gpt-5.2"
+        assert provider._resolve_model_name("gpt5.5") == "gpt-5.5"
+        assert provider._resolve_model_name("gpt5.4") == "gpt-5.4"
+        assert provider._resolve_model_name("gpt5.4-mini") == "gpt-5.4-mini"
         assert provider._resolve_model_name("gpt5.1-codex") == "gpt-5.1-codex"
         assert provider._resolve_model_name("codex-mini") == "gpt-5.1-codex-mini"
 
@@ -97,8 +133,11 @@ class TestOpenAIProvider:
         assert provider._resolve_model_name("o4-mini") == "o4-mini"
         assert provider._resolve_model_name("gpt-5") == "gpt-5"
         assert provider._resolve_model_name("gpt-5-mini") == "gpt-5-mini"
+        assert provider._resolve_model_name("gpt-5.5") == "gpt-5.5"
+        assert provider._resolve_model_name("gpt-5.4") == "gpt-5.4"
+        assert provider._resolve_model_name("gpt-5.4-mini") == "gpt-5.4-mini"
+        assert provider._resolve_model_name("gpt-5.4-nano") == "gpt-5.4-nano"
         assert provider._resolve_model_name("gpt-5.2") == "gpt-5.2"
-        assert provider._resolve_model_name("gpt-5.1") == "gpt-5.2"
         assert provider._resolve_model_name("gpt-5.1-codex") == "gpt-5.1-codex"
         assert provider._resolve_model_name("gpt-5.1-codex-mini") == "gpt-5.1-codex-mini"
 
@@ -124,8 +163,8 @@ class TestOpenAIProvider:
         provider = OpenAIModelProvider("test-key")
 
         capabilities = provider.get_capabilities("mini")
-        assert capabilities.model_name == "gpt-5-mini"  # "mini" now resolves to gpt-5-mini
-        assert capabilities.friendly_name == "OpenAI (GPT-5-mini)"
+        assert capabilities.model_name == "gpt-5.4-mini"
+        assert capabilities.friendly_name == "OpenAI (GPT-5.4 mini)"
         assert capabilities.context_window == 400_000
         assert capabilities.provider == ProviderType.OPENAI
 
@@ -311,7 +350,7 @@ class TestOpenAIProvider:
             "gpt5-nano",
             "gpt5nano",
             "nano",
-            "mini",  # resolves to gpt-5-mini
+            "mini",
         ]
         for alias in supported_aliases:
             assert provider.get_capabilities(alias).supports_extended_thinking is True
