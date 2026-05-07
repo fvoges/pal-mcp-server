@@ -1335,6 +1335,7 @@ check_claude_cli_integration() {
             # Verify the registered path matches current setup
             local expected_cmd="$python_cmd $server_path"
             if echo "$mcp_list" | grep -F "$server_path" &>/dev/null; then
+                print_success "Claude Code already configured for PAL"
                 return 0
             else
                 print_warning "PAL registered with different path, updating..."
