@@ -65,6 +65,23 @@ print_info() {
     echo -e "${YELLOW}$1${NC}" >&2
 }
 
+prompt_yes_no() {
+    local prompt="$1"
+
+    if [[ ! -t 0 ]]; then
+        print_info "Skipping prompt in non-interactive shell: $prompt"
+        return 1
+    fi
+
+    read -p "$prompt" -n 1 -r || {
+        echo ""
+        return 1
+    }
+    echo ""
+
+    [[ ! $REPLY =~ ^[Nn]$ ]]
+}
+
 # Get the script's directory (works on all platforms)
 get_script_dir() {
     cd "$(dirname "$0")" && pwd
@@ -275,9 +292,7 @@ find_python() {
             if ! pyenv versions 2>/dev/null | grep -E "3\.(1[2-9]|[2-9][0-9])" >/dev/null; then
                 echo ""
                 echo "Python 3.10+ is required. Pyenv can install Python 3.12 locally for this project."
-                read -p "Install Python 3.12 using pyenv? (Y/n): " -n 1 -r
-                echo ""
-                if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+                if prompt_yes_no "Install Python 3.12 using pyenv? (Y/n): "; then
                     if install_python_with_pyenv; then
                         # Try finding Python again
                         if python_cmd=$(find_python); then
@@ -292,9 +307,7 @@ find_python() {
                 if [[ ! -f ".python-version" ]] || ! grep -qE "3\.(1[2-9]|[2-9][0-9])" .python-version 2>/dev/null; then
                     echo ""
                     print_info "Python 3.12 is installed via pyenv but not set for this project."
-                    read -p "Set Python 3.12.0 for this project? (Y/n): " -n 1 -r
-                    echo ""
-                    if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+                    if prompt_yes_no "Set Python 3.12.0 for this project? (Y/n): "; then
                         # Find the first suitable Python version
                         local py_version=$(pyenv versions --bare | grep -E "^3\.(1[2-9]|[2-9][0-9])" | head -1)
                         if [[ -n "$py_version" ]]; then
@@ -574,6 +587,19 @@ bootstrap_pip() {
 # Setup environment using uv-first approach
 setup_environment() {
     local venv_python=""
+
+    # Reuse an existing virtual environment instead of asking uv to recreate it.
+    if [[ -d "$VENV_PATH" ]] && get_venv_python_path "$VENV_PATH" >/dev/null 2>&1; then
+        print_info "Using existing virtual environment..."
+        local python_cmd
+        python_cmd=$(find_python) || return 1
+        venv_python=$(setup_venv "$python_cmd")
+        if [[ $? -ne 0 ]]; then
+            return 1
+        fi
+        echo "$venv_python"
+        return 0
+    fi
 
     # Try uv-first approach
     if command -v uv &> /dev/null; then
@@ -1255,9 +1281,7 @@ check_claude_cli_integration() {
         echo ""
         print_warning "Claude CLI not found"
         echo ""
-        read -p "Would you like to add PAL to Claude Code? (Y/n): " -n 1 -r
-        echo ""
-        if [[ $REPLY =~ ^[Nn]$ ]]; then
+        if ! prompt_yes_no "Would you like to add PAL to Claude Code? (Y/n): "; then
             print_info "Skipping Claude Code integration"
             return 0
         fi
@@ -1345,9 +1369,7 @@ check_claude_cli_integration() {
     else
         # Not registered at all, ask user if they want to add it
         echo ""
-        read -p "Add PAL to Claude Code? (Y/n): " -n 1 -r
-        echo ""
-        if [[ $REPLY =~ ^[Nn]$ ]]; then
+        if ! prompt_yes_no "Add PAL to Claude Code? (Y/n): "; then
             local env_vars=$(parse_env_variables)
             local env_args=""
             
@@ -1414,9 +1436,7 @@ check_claude_desktop_integration() {
     legacy_names_csv=$(IFS=,; echo "${LEGACY_MCP_NAMES[*]}")
 
     echo ""
-    read -p "Configure PAL for Claude Desktop? (Y/n): " -n 1 -r
-    echo ""
-    if [[ $REPLY =~ ^[Nn]$ ]]; then
+    if ! prompt_yes_no "Configure PAL for Claude Desktop? (Y/n): "; then
         print_info "Skipping Claude Desktop integration"
         touch "$DESKTOP_CONFIG_FLAG"  # Don't ask again
         return 0
@@ -1703,9 +1723,7 @@ PY
 
     # Ask user if they want to add PAL to Gemini CLI
     echo ""
-    read -p "Configure PAL for Gemini CLI? (Y/n): " -n 1 -r
-    echo ""
-    if [[ $REPLY =~ ^[Nn]$ ]]; then
+    if ! prompt_yes_no "Configure PAL for Gemini CLI? (Y/n): "; then
         print_info "Skipping Gemini CLI integration"
         return 0
     fi
@@ -1848,9 +1866,7 @@ PY
 
     if [[ "$codex_has_pal" == false ]]; then
         echo ""
-        read -p "Configure PAL for Codex CLI? (Y/n): " -n 1 -r
-        echo ""
-        if [[ $REPLY =~ ^[Nn]$ ]]; then
+        if ! prompt_yes_no "Configure PAL for Codex CLI? (Y/n): "; then
             print_info "Skipping Codex CLI integration"
             return 0
         fi
@@ -1929,9 +1945,7 @@ CODExEOF
         if ! grep -Eq '^\s*web_search_request\s*=' "$codex_config" 2>/dev/null; then
             echo ""
             print_info "Web search requests let Codex pull fresh documentation for PAL's API lookup tooling."
-            read -p "Enable Codex CLI web search requests? (Y/n): " -n 1 -r
-            echo ""
-            if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+            if prompt_yes_no "Enable Codex CLI web search requests? (Y/n): "; then
                 if grep -Eq '^\s*\[features\]' "$codex_config" 2>/dev/null; then
                     if ! python3 - "$codex_config" <<'PY'
 import sys
@@ -2213,9 +2227,7 @@ PYCONF
         prompt="Update Qwen CLI pal configuration? (Y/n): "
     fi
 
-    read -p "$prompt" -n 1 -r
-    echo ""
-    if [[ $REPLY =~ ^[Nn]$ ]]; then
+    if ! prompt_yes_no "$prompt"; then
         print_info "Skipping Qwen CLI integration"
         print_qwen_manual_instructions "$python_cmd" "$server_path" "$script_dir" "$qwen_config" "$env_lines"
         return 0
