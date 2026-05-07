@@ -9,13 +9,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
+        python-version: ["3.12", "3.13", "3.14"]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -38,12 +38,12 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
-          python-version: "3.11"
+          python-version: "3.13"
 
       - name: Install dependencies
         run: |
@@ -51,7 +51,7 @@ jobs:
           pip install -r requirements-dev.txt
 
       - name: Run black formatter check
-        run: black --check . --exclude="test_simulation_files/"
+        run: black --check . --exclude="(\.pal_venv|simulator_tests|test_simulation_files)/"
 
       - name: Run ruff linter
-        run: ruff check . --exclude test_simulation_files
+        run: ruff check . --exclude simulator_tests --exclude test_simulation_files

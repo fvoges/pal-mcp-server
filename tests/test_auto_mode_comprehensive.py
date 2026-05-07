@@ -80,9 +80,9 @@ class TestAutoModeComprehensive:
                     "OPENROUTER_API_KEY": None,
                 },
                 {
-                    "EXTENDED_REASONING": "gemini-3-pro-preview",  # Gemini 3 Pro Preview for deep thinking
-                    "FAST_RESPONSE": "gemini-2.5-flash",  # Flash for speed
-                    "BALANCED": "gemini-2.5-flash",  # Flash as balanced
+                    "EXTENDED_REASONING": "gemini-3.1-pro-preview",
+                    "FAST_RESPONSE": "gemini-3-flash-preview",
+                    "BALANCED": "gemini-3-flash-preview",
                 },
             ),
             # Only OpenAI API available
@@ -94,9 +94,9 @@ class TestAutoModeComprehensive:
                     "OPENROUTER_API_KEY": None,
                 },
                 {
-                    "EXTENDED_REASONING": "gpt-5.1-codex",  # GPT-5.1 Codex prioritized for coding tasks
-                    "FAST_RESPONSE": "gpt-5.2",  # Prefer gpt-5.2 for speed
-                    "BALANCED": "gpt-5.2",  # Prefer gpt-5.2 for balanced
+                    "EXTENDED_REASONING": "gpt-5.5",
+                    "FAST_RESPONSE": "gpt-5.4-mini",
+                    "BALANCED": "gpt-5.5",
                 },
             ),
             # Only X.AI API available
@@ -122,9 +122,9 @@ class TestAutoModeComprehensive:
                     "OPENROUTER_API_KEY": None,
                 },
                 {
-                    "EXTENDED_REASONING": "gemini-3-pro-preview",  # Gemini 3 Pro Preview comes first in priority
-                    "FAST_RESPONSE": "gemini-2.5-flash",  # Prefer flash for speed
-                    "BALANCED": "gemini-2.5-flash",  # Prefer flash for balanced
+                    "EXTENDED_REASONING": "gemini-3.1-pro-preview",
+                    "FAST_RESPONSE": "gemini-3-flash-preview",
+                    "BALANCED": "gemini-3-flash-preview",
                 },
             ),
             # All native APIs available - Google still comes first
@@ -136,9 +136,9 @@ class TestAutoModeComprehensive:
                     "OPENROUTER_API_KEY": None,
                 },
                 {
-                    "EXTENDED_REASONING": "gemini-3-pro-preview",  # Gemini 3 Pro Preview comes first in priority
-                    "FAST_RESPONSE": "gemini-2.5-flash",  # Prefer flash for speed
-                    "BALANCED": "gemini-2.5-flash",  # Prefer flash for balanced
+                    "EXTENDED_REASONING": "gemini-3.1-pro-preview",
+                    "FAST_RESPONSE": "gemini-3-flash-preview",
+                    "BALANCED": "gemini-3-flash-preview",
                 },
             ),
         ],
