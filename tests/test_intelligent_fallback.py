@@ -44,7 +44,7 @@ class TestIntelligentFallback:
         ModelProviderRegistry.register_provider(ProviderType.OPENAI, OpenAIModelProvider)
 
         fallback_model = ModelProviderRegistry.get_preferred_fallback_model()
-        assert fallback_model == "gpt-5.5"
+        assert fallback_model == "gpt-6-astra"
 
     @patch.dict(os.environ, {"OPENAI_API_KEY": "", "GEMINI_API_KEY": "test-gemini-key"}, clear=False)
     def test_prefers_gemini_flash_when_openai_unavailable(self):
@@ -55,7 +55,7 @@ class TestIntelligentFallback:
         ModelProviderRegistry.register_provider(ProviderType.GOOGLE, GeminiModelProvider)
 
         fallback_model = ModelProviderRegistry.get_preferred_fallback_model()
-        assert fallback_model == "gemini-3-flash-preview"
+        assert fallback_model == "gemini-3.8-flash"
 
     @patch.dict(os.environ, {"OPENAI_API_KEY": "sk-test-key", "GEMINI_API_KEY": "test-gemini-key"}, clear=False)
     def test_prefers_openai_when_both_available(self):
@@ -68,7 +68,7 @@ class TestIntelligentFallback:
         ModelProviderRegistry.register_provider(ProviderType.GOOGLE, GeminiModelProvider)
 
         fallback_model = ModelProviderRegistry.get_preferred_fallback_model()
-        assert fallback_model == "gemini-3-flash-preview"
+        assert fallback_model == "gemini-3.8-flash"
 
     @patch.dict(os.environ, {"OPENAI_API_KEY": "", "GEMINI_API_KEY": ""}, clear=False)
     def test_fallback_when_no_keys_available(self):
@@ -147,7 +147,7 @@ class TestIntelligentFallback:
 
                 history, tokens = build_conversation_history(context, model_context=None)
 
-                mock_context_class.assert_called_once_with("gpt-5.5")
+                mock_context_class.assert_called_once_with("gpt-6-astra")
 
     def test_auto_mode_with_gemini_only(self):
         """Test auto mode behavior when only Gemini API key is available"""
@@ -185,7 +185,7 @@ class TestIntelligentFallback:
 
                 history, tokens = build_conversation_history(context, model_context=None)
 
-                mock_context_class.assert_called_once_with("gemini-3-flash-preview")
+                mock_context_class.assert_called_once_with("gemini-3.8-flash")
 
     def test_non_auto_mode_unchanged(self):
         """Test that non-auto mode behavior is unchanged"""

@@ -60,8 +60,8 @@ class TestAutoModeProviderSelection:
 
             # Should select appropriate Gemini models
             assert extended_reasoning == "gemini-3.1-pro-preview"
-            assert fast_response == "gemini-3-flash-preview"
-            assert balanced == "gemini-3-flash-preview"
+            assert fast_response == "gemini-3.8-flash"
+            assert balanced == "gemini-3.8-flash"
 
         finally:
             # Restore original environment
@@ -97,9 +97,9 @@ class TestAutoModeProviderSelection:
             fast_response = ModelProviderRegistry.get_preferred_fallback_model(ToolModelCategory.FAST_RESPONSE)
             balanced = ModelProviderRegistry.get_preferred_fallback_model(ToolModelCategory.BALANCED)
 
-            assert extended_reasoning == "gpt-5.5"
-            assert fast_response == "gpt-5.4-mini"
-            assert balanced == "gpt-5.5"
+            assert extended_reasoning == "gpt-6-astra"
+            assert fast_response == "gpt-5.6-luna"
+            assert balanced == "gpt-6-astra"
 
         finally:
             # Restore original environment
@@ -140,7 +140,7 @@ class TestAutoModeProviderSelection:
             assert extended_reasoning == "gemini-3.1-pro-preview"
 
             # Should prefer Gemini for fast response
-            assert fast_response == "gemini-3-flash-preview"
+            assert fast_response == "gemini-3.8-flash"
 
         finally:
             # Restore original environment
@@ -314,7 +314,7 @@ class TestAutoModeProviderSelection:
 
             # Test that providers resolve aliases correctly
             test_cases = [
-                ("flash", ProviderType.GOOGLE, "gemini-3-flash-preview"),
+                ("flash", ProviderType.GOOGLE, "gemini-3.8-flash"),
                 ("pro", ProviderType.GOOGLE, "gemini-3.1-pro-preview"),
                 ("mini", ProviderType.OPENAI, "gpt-5.4-mini"),
                 ("o3mini", ProviderType.OPENAI, "o3-mini"),

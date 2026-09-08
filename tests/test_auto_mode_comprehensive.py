@@ -81,8 +81,8 @@ class TestAutoModeComprehensive:
                 },
                 {
                     "EXTENDED_REASONING": "gemini-3.1-pro-preview",
-                    "FAST_RESPONSE": "gemini-3-flash-preview",
-                    "BALANCED": "gemini-3-flash-preview",
+                    "FAST_RESPONSE": "gemini-3.8-flash",
+                    "BALANCED": "gemini-3.8-flash",
                 },
             ),
             # Only OpenAI API available
@@ -94,9 +94,9 @@ class TestAutoModeComprehensive:
                     "OPENROUTER_API_KEY": None,
                 },
                 {
-                    "EXTENDED_REASONING": "gpt-5.5",
-                    "FAST_RESPONSE": "gpt-5.4-mini",
-                    "BALANCED": "gpt-5.5",
+                    "EXTENDED_REASONING": "gpt-6-astra",
+                    "FAST_RESPONSE": "gpt-5.6-luna",
+                    "BALANCED": "gpt-6-astra",
                 },
             ),
             # Only X.AI API available
@@ -123,8 +123,8 @@ class TestAutoModeComprehensive:
                 },
                 {
                     "EXTENDED_REASONING": "gemini-3.1-pro-preview",
-                    "FAST_RESPONSE": "gemini-3-flash-preview",
-                    "BALANCED": "gemini-3-flash-preview",
+                    "FAST_RESPONSE": "gemini-3.8-flash",
+                    "BALANCED": "gemini-3.8-flash",
                 },
             ),
             # All native APIs available - Google still comes first
@@ -137,8 +137,8 @@ class TestAutoModeComprehensive:
                 },
                 {
                     "EXTENDED_REASONING": "gemini-3.1-pro-preview",
-                    "FAST_RESPONSE": "gemini-3-flash-preview",
-                    "BALANCED": "gemini-3-flash-preview",
+                    "FAST_RESPONSE": "gemini-3.8-flash",
+                    "BALANCED": "gemini-3.8-flash",
                 },
             ),
         ],

@@ -52,15 +52,16 @@
       "allow_code_generation": true
     },
     {
-      "model_name": "gemini-3-flash-preview",
-      "friendly_name": "Gemini 3 Flash Preview",
+      "model_name": "gemini-3.8-flash",
+      "friendly_name": "Gemini 3.8 Flash",
       "aliases": [
         "flash",
-        "gemini-3-flash",
-        "flash3"
+        "gemini-flash",
+        "gemini-3.8-flash",
+        "flash3.8"
       ],
-      "intelligence_score": 12,
-      "description": "Current Gemini Flash preview with frontier-class performance at lower latency and cost.",
+      "intelligence_score": 13,
+      "description": "Current Gemini Flash, engineered for long-horizon software engineering, autonomous agents, and complex enterprise workflows.",
       "context_window": 1048576,
       "max_output_tokens": 65536,
       "supports_extended_thinking": true,
@@ -74,16 +75,37 @@
       "max_thinking_tokens": 24576
     },
     {
-      "model_name": "gemini-3.1-flash-lite",
-      "friendly_name": "Gemini 3.1 Flash-Lite",
+      "model_name": "gemini-3-flash-preview",
+      "friendly_name": "Gemini 3 Flash Preview",
+      "aliases": [
+        "gemini-3-flash",
+        "flash3"
+      ],
+      "intelligence_score": 12,
+      "description": "Prior-generation Gemini Flash preview; superseded by gemini-3.8-flash for new Flash workloads.",
+      "context_window": 1048576,
+      "max_output_tokens": 65536,
+      "supports_extended_thinking": true,
+      "supports_system_prompts": true,
+      "supports_streaming": true,
+      "supports_function_calling": true,
+      "supports_json_mode": true,
+      "supports_images": true,
+      "supports_temperature": true,
+      "max_image_size_mb": 20.0,
+      "max_thinking_tokens": 24576
+    },
+    {
+      "model_name": "gemini-3.5-flash-lite",
+      "friendly_name": "Gemini 3.5 Flash-Lite",
       "aliases": [
         "flashlite",
         "flash-lite",
-        "gemini-3.1-flash-lite",
-        "flashlite3.1"
+        "gemini-3.5-flash-lite",
+        "flashlite3.5"
       ],
       "intelligence_score": 9,
-      "description": "Stable Gemini 3.1 Flash-Lite for low-cost, high-volume multimodal workloads.",
+      "description": "Current Gemini Flash-Lite for low-cost, high-volume multimodal workloads.",
       "context_window": 1048576,
       "max_output_tokens": 65536,
       "supports_extended_thinking": true,
@@ -96,14 +118,14 @@
       "max_image_size_mb": 20.0
     },
     {
-      "model_name": "gemini-3.1-flash-lite-preview",
-      "friendly_name": "Gemini 3.1 Flash-Lite Preview",
+      "model_name": "gemini-3.1-flash-lite",
+      "friendly_name": "Gemini 3.1 Flash-Lite",
       "aliases": [
-        "gemini-3.1-flash-lite-preview",
-        "flash-lite-3.1-preview"
+        "gemini-3.1-flash-lite",
+        "flashlite3.1"
       ],
       "intelligence_score": 8,
-      "description": "Preview Gemini 3.1 Flash-Lite model; prefer the stable gemini-3.1-flash-lite endpoint where available.",
+      "description": "Prior-generation Gemini Flash-Lite; superseded by gemini-3.5-flash-lite.",
       "context_window": 1048576,
       "max_output_tokens": 65536,
       "supports_extended_thinking": true,

@@ -311,15 +311,15 @@ class TestProviderIntegration:
 
             # Should allow getting capabilities for "flash"
             capabilities = provider.get_capabilities("flash")
-            assert capabilities.model_name == "gemini-3-flash-preview"
+            assert capabilities.model_name == "gemini-3.8-flash"
 
             # Canonical form should also be allowed now that alias is on the allowlist
-            assert provider.validate_model_name("gemini-3-flash-preview")
+            assert provider.validate_model_name("gemini-3.8-flash")
             # Unrelated models remain blocked
             assert not provider.validate_model_name("pro")
             assert not provider.validate_model_name("gemini-2.5-pro")
 
-    @patch.dict(os.environ, {"GOOGLE_ALLOWED_MODELS": "gemini-3-flash-preview"})
+    @patch.dict(os.environ, {"GOOGLE_ALLOWED_MODELS": "gemini-3.8-flash"})
     def test_gemini_parameter_order_edge_case_full_name_only(self):
         """Test parameter order with only full name allowed, not alias.
 
@@ -335,7 +335,7 @@ class TestProviderIntegration:
         provider = GeminiModelProvider(api_key="test-key")
 
         # Should allow full name
-        assert provider.validate_model_name("gemini-3-flash-preview")
+        assert provider.validate_model_name("gemini-3.8-flash")
 
         # Should also allow alias that resolves to allowed full name
         # This works because is_allowed checks both resolved_name and original_name
@@ -615,7 +615,7 @@ class TestShorthandRestrictions:
 
             # Test Gemini provider
             assert gemini_provider.validate_model_name("flash")  # Should work with shorthand
-            assert gemini_provider.validate_model_name("gemini-3-flash-preview")  # Canonical allowed
+            assert gemini_provider.validate_model_name("gemini-3.8-flash")  # Canonical allowed
             assert not gemini_provider.validate_model_name("gemini-2.5-flash")  # Legacy flash is unrelated
             assert not gemini_provider.validate_model_name("pro")  # Not allowed
 
@@ -781,7 +781,7 @@ class TestAutoModeWithRestrictions:
             # The fallback will depend on how get_available_models handles aliases
             # When "mini" is allowed, it's returned as the allowed model
             # "mini" is now an alias for gpt-5.4-mini, but the list may show "mini" itself
-            assert model in ["mini", "gpt-5.4-mini", "o4-mini", "gemini-3-flash-preview"]
+            assert model in ["mini", "gpt-5.4-mini", "o4-mini", "gemini-3.8-flash"]
         finally:
             # Restore original registry state
             registry = ModelProviderRegistry()

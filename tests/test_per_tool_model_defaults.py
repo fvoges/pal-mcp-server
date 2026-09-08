@@ -98,7 +98,7 @@ class TestModelSelection:
             ModelProviderRegistry.register_provider(ProviderType.OPENAI, OpenAIModelProvider)
 
             model = ModelProviderRegistry.get_preferred_fallback_model(ToolModelCategory.EXTENDED_REASONING)
-            assert model == "gpt-5.5"
+            assert model == "gpt-6-astra"
 
     def test_extended_reasoning_with_gemini_only(self):
         """Test EXTENDED_REASONING prefers pro when only Gemini is available."""
@@ -130,7 +130,7 @@ class TestModelSelection:
             ModelProviderRegistry.register_provider(ProviderType.OPENAI, OpenAIModelProvider)
 
             model = ModelProviderRegistry.get_preferred_fallback_model(ToolModelCategory.FAST_RESPONSE)
-            assert model == "gpt-5.4-mini"
+            assert model == "gpt-5.6-luna"
 
     def test_fast_response_with_gemini_only(self):
         """Test FAST_RESPONSE prefers flash when only Gemini is available."""
@@ -146,7 +146,7 @@ class TestModelSelection:
             ModelProviderRegistry.register_provider(ProviderType.GOOGLE, GeminiModelProvider)
 
             model = ModelProviderRegistry.get_preferred_fallback_model(ToolModelCategory.FAST_RESPONSE)
-            assert model == "gemini-3-flash-preview"
+            assert model == "gemini-3.8-flash"
 
     def test_balanced_category_fallback(self):
         """Test BALANCED category uses existing logic."""
@@ -162,7 +162,7 @@ class TestModelSelection:
             ModelProviderRegistry.register_provider(ProviderType.OPENAI, OpenAIModelProvider)
 
             model = ModelProviderRegistry.get_preferred_fallback_model(ToolModelCategory.BALANCED)
-            assert model == "gpt-5.5"
+            assert model == "gpt-6-astra"
 
     def test_no_category_uses_balanced_logic(self):
         """Test that no category specified uses balanced logic."""
@@ -173,7 +173,7 @@ class TestModelSelection:
             ModelProviderRegistry.register_provider(ProviderType.GOOGLE, GeminiModelProvider)
 
             model = ModelProviderRegistry.get_preferred_fallback_model()
-            assert model == "gemini-3-flash-preview"
+            assert model == "gemini-3.8-flash"
 
 
 class TestFlexibleModelSelection:
@@ -188,21 +188,21 @@ class TestFlexibleModelSelection:
                 "env": {"OPENAI_API_KEY": "test-key"},
                 "provider_type": ProviderType.OPENAI,
                 "category": ToolModelCategory.EXTENDED_REASONING,
-                "expected": "gpt-5.5",
+                "expected": "gpt-6-astra",
             },
             # Case 2: Gemini provider for fast response
             {
                 "env": {"GEMINI_API_KEY": "test-key"},
                 "provider_type": ProviderType.GOOGLE,
                 "category": ToolModelCategory.FAST_RESPONSE,
-                "expected": "gemini-3-flash-preview",
+                "expected": "gemini-3.8-flash",
             },
             # Case 3: OpenAI provider for fast response
             {
                 "env": {"OPENAI_API_KEY": "test-key"},
                 "provider_type": ProviderType.OPENAI,
                 "category": ToolModelCategory.FAST_RESPONSE,
-                "expected": "gpt-5.4-mini",
+                "expected": "gpt-5.6-luna",
             },
         ]
 

@@ -127,6 +127,15 @@ class Calculator:
     def call_mcp_tool(self, tool_name: str, params: dict) -> tuple[Optional[str], Optional[str]]:
         """Call an MCP tool via standalone server"""
         try:
+            # The chat tool requires an existing working_directory_absolute_path for
+            # saving generated code artifacts. Default it to the simulator's own test
+            # files directory so individual tests don't each need to supply one.
+            if tool_name == "chat" and "working_directory_absolute_path" not in params:
+                if not self.test_dir:
+                    self.test_dir = os.path.join(os.getcwd(), "test_simulation_files")
+                    os.makedirs(self.test_dir, exist_ok=True)
+                params = {**params, "working_directory_absolute_path": self.test_dir}
+
             # Prepare the MCP initialization and tool call sequence
             init_request = {
                 "jsonrpc": "2.0",

@@ -110,7 +110,7 @@ class TestOpenAIProvider:
         provider = OpenAIModelProvider("test-key")
 
         # Test shorthand resolution
-        assert provider._resolve_model_name("latest") == "gpt-5.5"
+        assert provider._resolve_model_name("latest") == "gpt-6-astra"
         assert provider._resolve_model_name("mini") == "gpt-5.4-mini"
         assert provider._resolve_model_name("nano") == "gpt-5.4-nano"
         assert provider._resolve_model_name("o3mini") == "o3-mini"
