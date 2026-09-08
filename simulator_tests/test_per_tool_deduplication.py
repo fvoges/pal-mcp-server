@@ -120,13 +120,14 @@ def subtract(a, b):
             with open(new_file_path, "w") as f:
                 f.write(new_file_content)
 
-            # Continue precommit with both files
+            # Continue precommit with both files (still intermediate: total_steps=3
+            # requires next_step_required=True until the final step is reached)
             continue_params = {
                 "continuation_id": continuation_id,
                 "step": "Continue analysis with new_feature.py added. Please give me a quick one line reply about both files.",
                 "step_number": 2,
                 "total_steps": 3,
-                "next_step_required": False,
+                "next_step_required": True,
                 "findings": "Continuing pre-commit validation with both dummy_code.py and new_feature.py",
                 "path": os.getcwd(),  # Use current working directory as the git repo path
                 "relevant_files": [dummy_file_path, new_file_path],  # Old + new file
@@ -140,6 +141,28 @@ def subtract(a, b):
                 return False
 
             self.logger.info("  ✅ Step 3: precommit continuation completed")
+
+            # Step 4: Final precommit step - triggers expert analysis with both files
+            self.logger.info("  Step 4: precommit final step (triggers expert analysis)")
+            final_params = {
+                "continuation_id": continuation_id,
+                "step": "Final validation summary for dummy_code.py and new_feature.py. Please give me a quick one line reply.",
+                "step_number": 3,
+                "total_steps": 3,
+                "next_step_required": False,
+                "findings": "Pre-commit validation complete for dummy_code.py and new_feature.py",
+                "path": os.getcwd(),  # Use current working directory as the git repo path
+                "relevant_files": [dummy_file_path, new_file_path],  # Old + new file
+                "thinking_mode": "low",
+                "model": "flash",
+            }
+
+            response4, _ = self.call_mcp_tool("precommit", final_params)
+            if not response4:
+                self.logger.error("  ❌ Step 4: precommit final step failed")
+                return False
+
+            self.logger.info("  ✅ Step 4: precommit final step completed")
 
             # Validate results in server logs
             self.logger.info("  📋 Validating conversation history and file deduplication...")

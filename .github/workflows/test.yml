@@ -51,7 +51,7 @@ jobs:
           pip install -r requirements-dev.txt
 
       - name: Run black formatter check
-        run: black --check . --exclude="(\.pal_venv|simulator_tests|test_simulation_files)/"
+        run: black --check . --exclude="(\.pal_venv|test_simulation_files)/"
 
       - name: Run ruff linter
-        run: ruff check . --exclude simulator_tests --exclude test_simulation_files
+        run: ruff check . --exclude test_simulation_files
