@@ -36,13 +36,17 @@ def parse_version(version_str: str) -> tuple[int, int, int]:
     Parse version string to tuple of integers for comparison.
 
     Args:
-        version_str: Version string like "5.5.5"
+        version_str: Version string like "5.5.5" (an optional "+local" or
+            "-prerelease" suffix, e.g. "9.9.0+fvoges", is ignored)
 
     Returns:
         Tuple of (major, minor, patch) as integers
     """
     try:
-        parts = version_str.strip().split(".")
+        # Drop PEP 440 local version ("+fvoges") and any pre-release ("-rc1") suffix
+        # so downstream fork builds still compare cleanly against the base semver.
+        core = version_str.strip().split("+", 1)[0].split("-", 1)[0]
+        parts = core.split(".")
         if len(parts) >= 3:
             return (int(parts[0]), int(parts[1]), int(parts[2]))
         elif len(parts) == 2:
@@ -90,7 +94,9 @@ def fetch_github_version() -> Optional[tuple[str, str]]:
         logger.warning("urllib not available, cannot check for updates")
         return None
 
-    github_url = "https://raw.githubusercontent.com/BeehiveInnovations/pal-mcp-server/main/config.py"
+    # Point at this fork, not the (dormant) upstream, so the update check compares
+    # against releases we actually cut.
+    github_url = "https://raw.githubusercontent.com/fvoges/pal-mcp-server/main/config.py"
 
     try:
         # Set a 10-second timeout

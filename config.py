@@ -14,7 +14,9 @@ from utils.env import get_env
 # These values are used in server responses and for tracking releases
 # IMPORTANT: This is the single source of truth for version and author info
 # Semantic versioning: MAJOR.MINOR.PATCH
-__version__ = "9.9.0"
+# The "+fvoges" local segment (PEP 440) marks this as a downstream fork build;
+# the base semver is still managed by semantic-release. See scripts/sync_version.py.
+__version__ = "9.9.0+fvoges"
 # Last update date in ISO format
 __updated__ = "2026-09-10"
 # Primary maintainer
