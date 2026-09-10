@@ -2,6 +2,70 @@
 
 <!-- version list -->
 
+## v9.9.0 (2026-09-10)
+
+### Bug Fixes
+
+- Add Gemini-compliant JSON Schema items definitions
+  ([`6352d76`](https://github.com/fvoges/pal-mcp-server/commit/6352d768f695cd4ab064573a6b7bdc07c81ef29c))
+
+- Address Copilot review findings on PR #1
+  ([`fee1dcd`](https://github.com/fvoges/pal-mcp-server/commit/fee1dcd5acd3052c90affcacfaa9f9c6ee005c7d))
+
+- Derive LLM tool classification from requires_model() instead of hardcoded set
+  ([`d30699d`](https://github.com/fvoges/pal-mcp-server/commit/d30699d60e78692a132234f2e81b8b90ce18aed0))
+
+- Skip API key requirement when only non-LLM tools are enabled
+  ([`da51b40`](https://github.com/fvoges/pal-mcp-server/commit/da51b40a43c62cef892839dcec2bb92b308a6ab0))
+
+- **concurrency**: Isolate per-session state for concurrent agent safety
+  ([`7bc8d86`](https://github.com/fvoges/pal-mcp-server/commit/7bc8d86b1a17e66143fe6cd37b57a9fd7021589f))
+
+- **deps**: Pin mcp SDK below 2.0.0 to unblock CI
+  ([`4023b0a`](https://github.com/fvoges/pal-mcp-server/commit/4023b0ad1fe7a5ea1dce5c9cbc29152a72773883))
+
+- **server**: Wrap ModelContext initialization errors
+  ([`71cc142`](https://github.com/fvoges/pal-mcp-server/commit/71cc1424a048e170d378f86f3907556d8585c3e2))
+
+- **setup**: Reuse existing virtual environment
+  ([`532b404`](https://github.com/fvoges/pal-mcp-server/commit/532b404df5fca7794ac6552c8c341e38c8ef33e3))
+
+- **setup**: Show Claude Code registration status
+  ([`15759ec`](https://github.com/fvoges/pal-mcp-server/commit/15759ecc17b53f6aa9ab7b6facf9d4f593370e67))
+
+- **tool**: Allow additional properties in listmodels schema (fixes #376)
+  ([`77502c2`](https://github.com/fvoges/pal-mcp-server/commit/77502c245c4192ac4842cc5d75679633cd3659bd))
+
+### Chores
+
+- Sync version to config.py [skip ci]
+  ([`7afc7c1`](https://github.com/fvoges/pal-mcp-server/commit/7afc7c1cc96e23992c8f105f960132c657883bb1))
+
+- Trigger workflows
+  ([`fb2ef3d`](https://github.com/fvoges/pal-mcp-server/commit/fb2ef3d9a185edbd5ae6c68f057568e64b3316c2))
+
+### Continuous Integration
+
+- Remove Docker publishing workflows
+  ([`e748668`](https://github.com/fvoges/pal-mcp-server/commit/e748668f247796687682c37d8c010a58b7c0343d))
+
+- Update Python test matrix
+  ([`bfeee46`](https://github.com/fvoges/pal-mcp-server/commit/bfeee460ff62010093bc5c0e920ad022d84d58b1))
+
+### Features
+
+- **models**: Refresh OpenAI and Gemini defaults
+  ([`92c7332`](https://github.com/fvoges/pal-mcp-server/commit/92c73322e91e577167cf1a1162f4c4f86c06c3e7))
+
+- **models**: Refresh OpenAI and Gemini to current model lineups
+  ([`6e1a2f5`](https://github.com/fvoges/pal-mcp-server/commit/6e1a2f51be39c2798e6b1d76d4b2f83bb675893b))
+
+### Testing
+
+- Align Gemini fallback env setup
+  ([`e47ed9b`](https://github.com/fvoges/pal-mcp-server/commit/e47ed9bdaee787938e2d023600024eca77630abd))
+
+
 ## v9.8.2 (2025-12-15)
 
 ### Bug Fixes
