@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v9.9.1 (2026-09-26)
+
+### Bug Fixes
+
+- **deps**: Cap mcp below 2.0 in pyproject.toml
+  ([`9a74ae6`](https://github.com/fvoges/pal-mcp-server/commit/9a74ae6cbd19099393265fb51f4df5431bfe1143))
+
+
 ## v9.9.0 (2026-09-10)
 
 ### Bug Fixes
